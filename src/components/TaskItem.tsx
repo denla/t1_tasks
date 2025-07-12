@@ -46,7 +46,7 @@ const priorityColors = {
 
 export default function TaskItem({ task }: TaskItemProps) {
   return (
-    <Card className="w-full max-w-md">
+    <Card className="w-full">
       <CardHeader>
         <CardTitle>{task.title}</CardTitle>
       </CardHeader>

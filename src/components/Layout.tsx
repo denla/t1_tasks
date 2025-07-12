@@ -1,6 +1,5 @@
 // src / components / layout.tsx;
 
-import { ReactNode } from "react";
 import { Sidebar } from "./sidebar"; // создадим ниже
 
 export default function Layout({ children }: { children: ReactNode }) {
