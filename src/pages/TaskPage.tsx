@@ -15,7 +15,6 @@ type Task = {
 
 const TaskPage = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  // const [currentTask, setCurrentTask] = useState<Task>();
   useEffect(() => {
     const store = localStorage.getItem("tasks");
     const parsed = JSON.parse(store || "[]");
