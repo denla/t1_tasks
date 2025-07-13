@@ -11,11 +11,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
 const categories = ["Bug", "Feature", "Documentation", "Refactor", "Test"];
-
 const statuses = ["To Do", "In Progress", "Done"];
 const priorities = ["Low", "Medium", "High"];
 
-const TaskForm = ({ tasks, setTasks }) => {
+type Task = {
+  id: string;
+  title: string;
+  description?: string;
+  category: "Bug" | "Feature" | "Documentation" | "Refactor" | "Test";
+  status: "To Do" | "In Progress" | "Done";
+  priority: "Low" | "Medium" | "High";
+};
+
+type TaskFormProps = {
+  tasks: Task[];
+  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
+};
+
+const TaskForm = ({ tasks, setTasks }: TaskFormProps) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [category, setCategory] = useState<string>("");
@@ -45,7 +58,7 @@ const TaskForm = ({ tasks, setTasks }) => {
     return Math.max(...tasks.map((task) => Number(task.id))) + 1;
   };
 
-  const addTask = (newTask) => {
+  const addTask = (newTask: any) => {
     if (
       newTask.title &&
       newTask.category &&
@@ -59,8 +72,8 @@ const TaskForm = ({ tasks, setTasks }) => {
     }
   };
 
-  const editTask = (newTask) => {
-    const updatedTasks = tasks.map((task) => {
+  const editTask = (newTask: any) => {
+    const updatedTasks = tasks.map((task: any) => {
       console.log("task.id", task.id, "newTask.id", newTask.id);
       if (task.id == newTask.id) {
         return newTask;
@@ -134,7 +147,6 @@ const TaskForm = ({ tasks, setTasks }) => {
               priority,
             };
             id ? editTask(newTask) : addTask(newTask);
-            // onSubmit(e, newTask);
           }}
         >
           Save

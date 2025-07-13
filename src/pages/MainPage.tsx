@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import TaskItem from "@/components/TaskItem";
-
-import { Card } from "@/components/ui/card";
-
-import Layout from "@/components/layout";
+import Layout from "@/components/Layout";
 import TaskForm from "@/components/TaskForm";
 
 import { Button } from "@/components/ui/button";

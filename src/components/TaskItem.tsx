@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -16,22 +16,24 @@ type TaskItemProps = {
   task: Task;
 };
 
-const categoryColors = {
+type BadgeVariant = React.ComponentProps<typeof Badge>["variant"];
+
+const categoryColors: Record<Task["category"], BadgeVariant> = {
   Bug: "destructive",
-  Feature: "green",
-  Documentation: "blue",
-  Refactor: "yellow",
-  Test: "purple",
+  Feature: "default",
+  Documentation: "secondary",
+  Refactor: "outline",
+  Test: "default",
 };
 
-const statusColors = {
+const statusColors: Record<Task["status"], BadgeVariant> = {
   "To Do": "secondary",
   "In Progress": "default",
-  Done: "success",
+  Done: "outline",
 };
 
-const priorityColors = {
-  Low: "muted",
+const priorityColors: Record<Task["priority"], BadgeVariant> = {
+  Low: "outline",
   Medium: "default",
   High: "destructive",
 };
