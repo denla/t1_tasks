@@ -1,19 +1,16 @@
 import { useState } from "react";
-import { Home, ListTodo, Settings, Menu } from "lucide-react";
+import { Home, ListTodo, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useLocation } from "react-router-dom";
+
+import SelectField from "./SelectField";
 
 const navItems = [
   { label: "Главная", icon: <Home className="w-4 h-4" />, to: "/" },
   { label: "Задачи", icon: <ListTodo className="w-4 h-4" />, to: "/tasks" },
-  {
-    label: "Настройки",
-    icon: <Settings className="w-4 h-4" />,
-    to: "/settings",
-  },
 ];
 
-export const Sidebar = () => {
+export const AppSidebar = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
@@ -55,6 +52,19 @@ export const Sidebar = () => {
                 {item.icon}
                 {item.label}
               </Button>
+
+              <SelectField
+                label="Категория"
+                value=""
+                onValueChange={() => {}}
+                options={[
+                  "Bug",
+                  "Feature",
+                  "Documentation",
+                  "Refactor",
+                  "Test",
+                ]}
+              />
             </Link>
           ))}
         </nav>
@@ -62,3 +72,10 @@ export const Sidebar = () => {
     </>
   );
 };
+
+// <Card className="w-[300px] h-auto">
+//   <CardHeader>
+//     <CardTitle>HEHEHE</CardTitle>
+//   </CardHeader>
+//   <CardContent className="space-y-4"></CardContent>
+// </Card>

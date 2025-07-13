@@ -6,7 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import SelectField from "@/components/SelectField";
 
-import { CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+
+import { useNavigate } from "react-router-dom";
 
 const categories = ["Bug", "Feature", "Documentation", "Refactor", "Test"];
 
@@ -21,6 +23,7 @@ const TaskForm = ({ tasks, setTasks }) => {
   const [priority, setPriority] = useState<string>("");
 
   const { id } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (id && tasks.length > 0) {
@@ -66,6 +69,7 @@ const TaskForm = ({ tasks, setTasks }) => {
     });
     setTasks(updatedTasks);
     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+    navigate("/");
   };
 
   const clearForm = () => {
@@ -77,64 +81,66 @@ const TaskForm = ({ tasks, setTasks }) => {
   };
 
   return (
-    <CardContent className="space-y-4 gap-20">
-      <Input
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-      />
-      <Textarea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <SelectField
-            label="Категория"
-            value={category}
-            onValueChange={setCategory}
-            options={categories}
-          />
+    <Card className="w-full">
+      <CardContent className="space-y-4">
+        <Input
+          placeholder="Title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <Textarea
+          placeholder="Description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <SelectField
+              label="Category"
+              value={category}
+              onValueChange={setCategory}
+              options={categories}
+            />
+          </div>
+
+          <div>
+            <SelectField
+              label="Status"
+              value={status}
+              onValueChange={setStatus}
+              options={statuses}
+            />
+          </div>
+
+          <div>
+            <SelectField
+              label="Priority"
+              value={priority}
+              onValueChange={setPriority}
+              options={priorities}
+            />
+          </div>
         </div>
 
-        <div>
-          <SelectField
-            label="Статус"
-            value={status}
-            onValueChange={setStatus}
-            options={statuses}
-          />
-        </div>
-
-        <div>
-          <SelectField
-            label="Приоритет"
-            value={priority}
-            onValueChange={setPriority}
-            options={priorities}
-          />
-        </div>
-      </div>
-
-      <Button
-        onClick={(e) => {
-          e.preventDefault();
-          const newTask = {
-            id: id ? id : getNewId(),
-            title,
-            description: description || "Без описания",
-            category,
-            status,
-            priority,
-          };
-          id ? editTask(newTask) : addTask(newTask);
-          // onSubmit(e, newTask);
-        }}
-      >
-        Save
-      </Button>
-    </CardContent>
+        <Button
+          onClick={(e) => {
+            e.preventDefault();
+            const newTask = {
+              id: id ? id : getNewId(),
+              title,
+              description: description,
+              category,
+              status,
+              priority,
+            };
+            id ? editTask(newTask) : addTask(newTask);
+            // onSubmit(e, newTask);
+          }}
+        >
+          Save
+        </Button>
+      </CardContent>
+    </Card>
   );
 };
 
