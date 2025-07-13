@@ -107,32 +107,25 @@ const TaskForm = ({ tasks, setTasks }: TaskFormProps) => {
           onChange={(e) => setDescription(e.target.value)}
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <SelectField
-              label="Category"
-              value={category}
-              onValueChange={setCategory}
-              options={categories}
-            />
-          </div>
+          <SelectField
+            label="Category"
+            value={category}
+            onValueChange={setCategory}
+            options={categories}
+          />
+          <SelectField
+            label="Status"
+            value={status}
+            onValueChange={setStatus}
+            options={statuses}
+          />
 
-          <div>
-            <SelectField
-              label="Status"
-              value={status}
-              onValueChange={setStatus}
-              options={statuses}
-            />
-          </div>
-
-          <div>
-            <SelectField
-              label="Priority"
-              value={priority}
-              onValueChange={setPriority}
-              options={priorities}
-            />
-          </div>
+          <SelectField
+            label="Priority"
+            value={priority}
+            onValueChange={setPriority}
+            options={priorities}
+          />
         </div>
 
         <Button

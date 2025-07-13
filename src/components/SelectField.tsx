@@ -27,7 +27,7 @@ const SelectField = ({
   <div className="flex flex-col gap-2">
     <Label>{label}</Label>
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger>
+      <SelectTrigger className="w-full">
         <SelectValue placeholder={placeholder || label} />
       </SelectTrigger>
       <SelectContent>
