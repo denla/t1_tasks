@@ -7,7 +7,33 @@ import { Button } from "@/shared/ui/shadcn/button";
 import { observer } from "mobx-react-lite";
 import { taskStore } from "@/entities/task/model/taskStore";
 
+import { useEffect } from "react";
+import client from "@/shared/api/apolloClient";
+import { gql } from "@apollo/client";
+
+const GET_TASKS = gql`
+  query GetTasks {
+    tasks {
+      id
+      title
+      description
+      category
+      currentStatus
+      priority
+    }
+  }
+`;
+
 const MainPage = () => {
+  useEffect(() => {
+    client
+      .query({ query: GET_TASKS })
+      .then(({ data }) => {
+        console.log("Tasks:", data.tasks);
+      })
+      .catch(console.error);
+  }, []);
+
   return (
     <>
       <Layout>

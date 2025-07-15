@@ -18,7 +18,7 @@ const categoryColors: Record<Task["category"], BadgeVariant> = {
   Test: "default",
 };
 
-const statusColors: Record<Task["status"], BadgeVariant> = {
+const statusColors: Record<Task["currentStatus"], BadgeVariant> = {
   "To Do": "secondary",
   "In Progress": "default",
   Done: "outline",
@@ -36,7 +36,9 @@ export default function TaskItem({ task }: TaskItemProps) {
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-2">
           <Badge variant={categoryColors[task.category]}>{task.category}</Badge>
-          <Badge variant={statusColors[task.status]}>{task.status}</Badge>
+          <Badge variant={statusColors[task.currentStatus]}>
+            {task.currentStatus}
+          </Badge>
           <Badge variant={priorityColors[task.priority]}>{task.priority}</Badge>
         </div>
         <CardTitle className="text-xl">{task.title}</CardTitle>

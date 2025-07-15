@@ -34,7 +34,7 @@ const TaskForm = () => {
         setTitle(task.title);
         setDescription(task.description || "");
         setCategory(task.category);
-        setStatus(task.status);
+        setStatus(task.currentStatus);
         setPriority(task.priority);
       }
       // console.log("TASK FORM UPDATE");
@@ -51,20 +51,24 @@ const TaskForm = () => {
   };
 
   const handleSave = () => {
-    const newTask: Task = {
-      id: id ? id : taskStore.getNewId(),
+    if (!title || !category || !status || !priority) return;
+
+    const baseTask = {
       title,
       description,
       category: category as Task["category"],
-      status: status as Task["status"],
+      currentStatus: status as Task["currentStatus"],
       priority: priority as Task["priority"],
     };
 
-    if (!title || !category || !status || !priority) return;
-
     if (id) {
-      taskStore.updateTask(newTask);
+      const updatedTask: Task = {
+        id,
+        ...baseTask,
+      };
+      taskStore.updateTask(updatedTask);
     } else {
+      const newTask: Omit<Task, "id"> = baseTask;
       taskStore.addTask(newTask);
       clearForm();
     }
