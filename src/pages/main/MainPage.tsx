@@ -1,4 +1,3 @@
-import TaskItem from "@/entities/task/ui/TaskItem";
 import Layout from "@/shared/ui/layout/Layout";
 import TaskForm from "@/entities/task/ui/TaskForm";
 
@@ -10,6 +9,7 @@ import { taskStore } from "@/entities/task/model/taskStore";
 import { useEffect } from "react";
 import client from "@/shared/api/apolloClient";
 import { gql } from "@apollo/client";
+import TaskList from "@/entities/task/ui/TaskList";
 
 const GET_TASKS = gql`
   query GetTasks {
@@ -50,17 +50,7 @@ const MainPage = () => {
             )}
           </div>
 
-          {taskStore.tasks.length ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
-              {taskStore.tasks.map((task) => (
-                <TaskItem key={task.id} task={task} />
-              ))}
-            </div>
-          ) : (
-            <div className="p-20 w-[100%] flex justify-center">
-              Nothing found. Please create a task.
-            </div>
-          )}
+          <TaskList />
         </div>
       </Layout>
     </>
