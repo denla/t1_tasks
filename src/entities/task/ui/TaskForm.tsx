@@ -1,34 +1,23 @@
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import SelectField from "@/components/SelectField";
+import { Input } from "@/shared/ui/shadcn/input";
+import { Textarea } from "@/shared/ui/shadcn/textarea";
+import { Button } from "@/shared/ui/shadcn/button";
+import SelectField from "@/shared/ui/select/SelectField";
 
-import { Card, CardContent } from "@/components/ui/card";
-
+import { Card, CardContent } from "@/shared/ui/shadcn/card";
 import { useNavigate } from "react-router-dom";
+
+import { observer } from "mobx-react-lite";
+import { taskStore } from "@/entities/task/model/taskStore";
+import type { Task } from "@/entities/task/model/taskStore";
 
 const categories = ["Bug", "Feature", "Documentation", "Refactor", "Test"];
 const statuses = ["To Do", "In Progress", "Done"];
 const priorities = ["Low", "Medium", "High"];
 
-type Task = {
-  id: string;
-  title: string;
-  description?: string;
-  category: "Bug" | "Feature" | "Documentation" | "Refactor" | "Test";
-  status: "To Do" | "In Progress" | "Done";
-  priority: "Low" | "Medium" | "High";
-};
-
-type TaskFormProps = {
-  tasks: Task[];
-  setTasks: React.Dispatch<React.SetStateAction<Task[]>>;
-};
-
-const TaskForm = ({ tasks, setTasks }: TaskFormProps) => {
+const TaskForm = () => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [category, setCategory] = useState<string>("");
@@ -39,8 +28,8 @@ const TaskForm = ({ tasks, setTasks }: TaskFormProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (id && tasks.length > 0) {
-      const task = tasks.find((task) => task.id == id);
+    if (id && taskStore.tasks.length > 0) {
+      const task = taskStore.tasks.find((task) => task.id == id);
       if (task) {
         setTitle(task.title);
         setDescription(task.description || "");
@@ -51,39 +40,7 @@ const TaskForm = ({ tasks, setTasks }: TaskFormProps) => {
       // console.log("TASK FORM UPDATE");
       console.log(task);
     }
-  }, [id, tasks]);
-
-  const getNewId = () => {
-    if (tasks.length === 0) return 1;
-    return Math.max(...tasks.map((task) => Number(task.id))) + 1;
-  };
-
-  const addTask = (newTask: any) => {
-    if (
-      newTask.title &&
-      newTask.category &&
-      newTask.status &&
-      newTask.priority
-    ) {
-      const updatedTasks = [...tasks, newTask];
-      setTasks(updatedTasks);
-      localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-      clearForm();
-    }
-  };
-
-  const editTask = (newTask: any) => {
-    const updatedTasks = tasks.map((task: any) => {
-      console.log("task.id", task.id, "newTask.id", newTask.id);
-      if (task.id == newTask.id) {
-        return newTask;
-      }
-      return task;
-    });
-    setTasks(updatedTasks);
-    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-    navigate("/");
-  };
+  }, [id]);
 
   const clearForm = () => {
     setTitle("");
@@ -91,6 +48,28 @@ const TaskForm = ({ tasks, setTasks }: TaskFormProps) => {
     setCategory("");
     setStatus("");
     setPriority("");
+  };
+
+  const handleSave = () => {
+    const newTask: Task = {
+      id: id ? id : taskStore.getNewId(),
+      title,
+      description,
+      category: category as Task["category"],
+      status: status as Task["status"],
+      priority: priority as Task["priority"],
+    };
+
+    if (!title || !category || !status || !priority) return;
+
+    if (id) {
+      taskStore.updateTask(newTask);
+    } else {
+      taskStore.addTask(newTask);
+      clearForm();
+    }
+
+    navigate("/");
   };
 
   return (
@@ -128,25 +107,10 @@ const TaskForm = ({ tasks, setTasks }: TaskFormProps) => {
           />
         </div>
 
-        <Button
-          onClick={(e) => {
-            e.preventDefault();
-            const newTask = {
-              id: id ? id : getNewId(),
-              title,
-              description: description,
-              category,
-              status,
-              priority,
-            };
-            id ? editTask(newTask) : addTask(newTask);
-          }}
-        >
-          Save
-        </Button>
+        <Button onClick={handleSave}>Save</Button>
       </CardContent>
     </Card>
   );
 };
 
-export default TaskForm;
+export default observer(TaskForm);

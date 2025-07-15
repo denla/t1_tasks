@@ -1,5 +1,6 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
+  "path": "src/shared/ui/shadcn",
   "style": "new-york",
   "rsc": false,
   "tsx": true,
@@ -13,7 +14,7 @@
   "aliases": {
     "components": "@/components",
     "utils": "@/lib/utils",
-    "ui": "@/components/ui",
+    "ui": "@/shared/ui/shadcn",
     "lib": "@/lib",
     "hooks": "@/hooks"
   },

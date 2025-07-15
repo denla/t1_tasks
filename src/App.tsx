@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import MainPage from "./pages/MainPage";
-import TaskPage from "./pages/TaskPage";
+import MainPage from "@/pages/main/MainPage";
+import TaskPage from "@/pages/task/TaskPage";
 
 export const App = () => (
   <BrowserRouter>

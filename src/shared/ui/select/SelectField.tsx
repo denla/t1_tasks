@@ -1,11 +1,11 @@
-import { Label } from "@/components/ui/label";
+import { Label } from "@/shared/ui/shadcn/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/ui/shadcn/select";
 
 interface SelectFieldProps {
   label: string;

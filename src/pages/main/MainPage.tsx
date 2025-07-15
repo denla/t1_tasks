@@ -1,0 +1,44 @@
+import TaskItem from "@/entities/task/ui/TaskItem";
+import Layout from "@/shared/ui/layout/Layout";
+import TaskForm from "@/entities/task/ui/TaskForm";
+
+import { Button } from "@/shared/ui/shadcn/button";
+
+import { observer } from "mobx-react-lite";
+import { taskStore } from "@/entities/task/model/taskStore";
+
+const MainPage = () => {
+  return (
+    <>
+      <Layout>
+        <h1 className="text-2xl font-semibold mb-[16px]">Create a task</h1>
+        <TaskForm />
+
+        <div>
+          <div className="flex items-center gap-2 justify-between mt-[32px] mb-[16px]">
+            <h1 className="text-2xl font-semibold ">Tasks</h1>
+            {taskStore.tasks.length > 0 && (
+              <Button onClick={() => taskStore.removeTasks()} variant="outline">
+                Clear all
+              </Button>
+            )}
+          </div>
+
+          {taskStore.tasks.length ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
+              {taskStore.tasks.map((task) => (
+                <TaskItem key={task.id} task={task} />
+              ))}
+            </div>
+          ) : (
+            <div className="p-20 w-[100%] flex justify-center">
+              Nothing found. Please create a task.
+            </div>
+          )}
+        </div>
+      </Layout>
+    </>
+  );
+};
+
+export default observer(MainPage);

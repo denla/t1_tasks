@@ -1,16 +1,8 @@
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardTitle } from "@/shared/ui/shadcn/card";
+import { Badge } from "@/shared/ui/shadcn/badge";
+import { Button } from "@/shared/ui/shadcn/button";
 import { Link } from "react-router-dom";
-
-type Task = {
-  id: string;
-  title: string;
-  description?: string;
-  category: "Bug" | "Feature" | "Documentation" | "Refactor" | "Test";
-  status: "To Do" | "In Progress" | "Done";
-  priority: "Low" | "Medium" | "High";
-};
+import type { Task } from "@/entities/task/model/taskStore";
 
 type TaskItemProps = {
   task: Task;
