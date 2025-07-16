@@ -1,59 +1,60 @@
+import { useEffect, useState } from "react";
 import Layout from "@/shared/ui/layout/Layout";
 import TaskForm from "@/entities/task/ui/TaskForm";
-
 import { Button } from "@/shared/ui/shadcn/button";
-
 import { observer } from "mobx-react-lite";
 import { taskStore } from "@/entities/task/model/taskStore";
-
-import { useEffect } from "react";
-import client from "@/shared/api/apolloClient";
-import { gql } from "@apollo/client";
 import TaskList from "@/entities/task/ui/TaskList";
 
-const GET_TASKS = gql`
-  query GetTasks {
-    tasks {
-      id
-      title
-      description
-      category
-      currentStatus
-      priority
-    }
-  }
-`;
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogClose,
+} from "@/shared/ui/shadcn/dialog";
 
 const MainPage = () => {
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
-    client
-      .query({ query: GET_TASKS })
-      .then(({ data }) => {
-        console.log("Tasks:", data.tasks);
-      })
-      .catch(console.error);
+    taskStore.loadTasks();
   }, []);
 
-  return (
-    <>
-      <Layout>
-        <h1 className="text-2xl font-semibold mb-[16px]">Create a task</h1>
-        <TaskForm />
+  const closeModal = () => setOpen(false);
 
-        <div>
-          <div className="flex items-center gap-2 justify-between mt-[32px] mb-[16px]">
-            <h1 className="text-2xl font-semibold ">Tasks</h1>
+  return (
+    <Layout>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="text-2xl font-semibold">Tasks</h1>
+          <div className="flex gap-2">
             {taskStore.tasks.length > 0 && (
               <Button onClick={() => taskStore.removeTasks()} variant="outline">
                 Clear all
               </Button>
             )}
-          </div>
 
-          <TaskList />
+            <DialogTrigger asChild>
+              <Button onClick={() => setOpen(true)}>Create Task</Button>
+            </DialogTrigger>
+          </div>
         </div>
-      </Layout>
-    </>
+
+        <TaskList />
+
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Create a task</DialogTitle>
+            <DialogClose asChild>
+              <button aria-label="Close">✕</button>
+            </DialogClose>
+          </DialogHeader>
+          <TaskForm onSave={closeModal} />
+        </DialogContent>
+      </Dialog>
+    </Layout>
   );
 };
 

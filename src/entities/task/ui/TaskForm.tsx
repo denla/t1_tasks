@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { Input } from "@/shared/ui/shadcn/input";
 import { Textarea } from "@/shared/ui/shadcn/textarea";
@@ -7,7 +7,6 @@ import { Button } from "@/shared/ui/shadcn/button";
 import SelectField from "@/shared/ui/select/SelectField";
 
 import { Card, CardContent } from "@/shared/ui/shadcn/card";
-import { useNavigate } from "react-router-dom";
 
 import { observer } from "mobx-react-lite";
 import { taskStore } from "@/entities/task/model/taskStore";
@@ -17,7 +16,11 @@ const categories = ["Bug", "Feature", "Documentation", "Refactor", "Test"];
 const statuses = ["To Do", "In Progress", "Done"];
 const priorities = ["Low", "Medium", "High"];
 
-const TaskForm = () => {
+interface TaskFormProps {
+  onSave?: () => void;
+}
+
+const TaskForm = ({ onSave }: TaskFormProps) => {
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [category, setCategory] = useState<string>("");
@@ -29,7 +32,7 @@ const TaskForm = () => {
 
   useEffect(() => {
     if (id && taskStore.tasks.length > 0) {
-      const task = taskStore.tasks.find((task) => task.id == id);
+      const task = taskStore.tasks.find((task) => task.id === id);
       if (task) {
         setTitle(task.title);
         setDescription(task.description || "");
@@ -37,8 +40,6 @@ const TaskForm = () => {
         setStatus(task.currentStatus);
         setPriority(task.priority);
       }
-      // console.log("TASK FORM UPDATE");
-      console.log(task);
     }
   }, [id]);
 
@@ -73,6 +74,7 @@ const TaskForm = () => {
       clearForm();
     }
 
+    if (onSave) onSave();
     navigate("/");
   };
 
@@ -102,7 +104,6 @@ const TaskForm = () => {
             onValueChange={setStatus}
             options={statuses}
           />
-
           <SelectField
             label="Priority"
             value={priority}
