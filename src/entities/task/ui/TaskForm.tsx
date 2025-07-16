@@ -6,8 +6,6 @@ import { Textarea } from "@/shared/ui/shadcn/textarea";
 import { Button } from "@/shared/ui/shadcn/button";
 import SelectField from "@/shared/ui/select/SelectField";
 
-import { Card, CardContent } from "@/shared/ui/shadcn/card";
-
 import { observer } from "mobx-react-lite";
 import { taskStore } from "@/entities/task/model/taskStore";
 import type { Task } from "@/entities/task/model/taskStore";
