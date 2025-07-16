@@ -3,6 +3,8 @@ import { taskStore } from "../model/taskStore";
 import TaskItem from "./TaskItem";
 import SelectField from "@/shared/ui/select/SelectField";
 
+import { Input } from "@/shared/ui/shadcn/input";
+
 const TaskList = () => {
   const [category, setCategory] = useState<string>("All");
   const [status, setStatus] = useState<string>("All");
@@ -19,12 +21,32 @@ const TaskList = () => {
   const statuses = ["All", "To Do", "In Progress", "Done"];
   const priorities = ["All", "Low", "Medium", "High"];
 
+  const [search, setSearch] = useState<string>("");
+
   useEffect(() => {
     taskStore.loadTasks();
   }, [category, status, priority]);
 
+  const filteredTasks = taskStore.tasks.filter(
+    (el) =>
+      (category === "All" || el.category === category) &&
+      (status === "All" || el.currentStatus === status) &&
+      (priority === "All" || el.priority === priority) &&
+      (el.title.toLowerCase().includes(search.toLowerCase()) ||
+        (el.description &&
+          el.description.toLowerCase().includes(search.toLowerCase())))
+  );
+
   return (
     <div>
+      <Input
+        type="text"
+        placeholder="Search tasks"
+        className="w-full mb-4"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <SelectField
           label="Category"
@@ -46,14 +68,20 @@ const TaskList = () => {
           options={priorities}
         />
       </div>
-      {taskStore.tasks.length ? (
+
+      {filteredTasks.length ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
           {taskStore.tasks
             .filter(
               (el) =>
                 (category === "All" || el.category === category) &&
                 (status === "All" || el.currentStatus === status) &&
-                (priority === "All" || el.priority === priority)
+                (priority === "All" || el.priority === priority) &&
+                (el.title.toLowerCase().includes(search.toLowerCase()) ||
+                  (el.description &&
+                    el.description
+                      .toLowerCase()
+                      .includes(search.toLowerCase())))
             )
             .map((task) => (
               <TaskItem key={task.id} task={task} />
@@ -61,9 +89,7 @@ const TaskList = () => {
         </div>
       ) : (
         <div className="p-20 w-full flex justify-center">
-          {taskStore.loading
-            ? "Loading tasks..."
-            : " Nothing found. Please create a task."}
+          {taskStore.loading ? "Loading tasks..." : " Nothing found"}
         </div>
       )}
     </div>

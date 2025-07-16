@@ -79,42 +79,39 @@ const TaskForm = ({ onSave }: TaskFormProps) => {
   };
 
   return (
-    <Card className="w-full">
-      <CardContent className="space-y-4">
-        <Input
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+    <div className="space-y-4">
+      <Input
+        placeholder="Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+      <Textarea
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <SelectField
+          label="Category"
+          value={category}
+          onValueChange={setCategory}
+          options={categories}
         />
-        <Textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+        <SelectField
+          label="Status"
+          value={status}
+          onValueChange={setStatus}
+          options={statuses}
         />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <SelectField
-            label="Category"
-            value={category}
-            onValueChange={setCategory}
-            options={categories}
-          />
-          <SelectField
-            label="Status"
-            value={status}
-            onValueChange={setStatus}
-            options={statuses}
-          />
-          <SelectField
-            label="Priority"
-            value={priority}
-            onValueChange={setPriority}
-            options={priorities}
-          />
-        </div>
-
-        <Button onClick={handleSave}>Save</Button>
-      </CardContent>
-    </Card>
+        <SelectField
+          label="Priority"
+          value={priority}
+          onValueChange={setPriority}
+          options={priorities}
+        />
+      </div>
+      <Button onClick={handleSave}>Save</Button>
+    </div>
   );
 };
 
