@@ -1,31 +1,35 @@
 import { useEffect, useState } from "react";
 import { taskStore } from "../model/taskStore";
 import TaskItem from "./TaskItem";
-import SelectField from "@/shared/ui/select/SelectField";
 
 import { Input } from "@/shared/ui/shadcn/input";
+import { Button } from "@/shared/ui/shadcn/button";
+
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/shared/ui/shadcn/popover";
+
+import { ListFilter, LoaderCircle } from "lucide-react";
+import Filters from "./Filters";
 
 const TaskList = () => {
   const [category, setCategory] = useState<string>("All");
   const [status, setStatus] = useState<string>("All");
   const [priority, setPriority] = useState<string>("All");
 
-  const categories = [
-    "All",
-    "Bug",
-    "Feature",
-    "Documentation",
-    "Refactor",
-    "Test",
-  ];
-  const statuses = ["All", "To Do", "In Progress", "Done"];
-  const priorities = ["All", "Low", "Medium", "High"];
-
   const [search, setSearch] = useState<string>("");
 
   useEffect(() => {
     taskStore.loadTasks();
   }, [category, status, priority]);
+
+  const clearFilters = () => {
+    setCategory("All");
+    setStatus("All");
+    setPriority("All");
+  };
 
   const filteredTasks = taskStore.tasks.filter(
     (el) =>
@@ -39,34 +43,33 @@ const TaskList = () => {
 
   return (
     <div>
-      <Input
-        type="text"
-        placeholder="Search tasks"
-        className="w-full mb-4"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-        <SelectField
-          label="Category"
-          value={category}
-          onValueChange={setCategory}
-          options={categories}
+      <div className="flex flex-row gap-4 mb-4">
+        <Input
+          type="text"
+          placeholder="Search tasks"
+          className="w-full"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
-        <SelectField
-          label="Status"
-          value={status}
-          onValueChange={setStatus}
-          options={statuses}
-        />
-
-        <SelectField
-          label="Priority"
-          value={priority}
-          onValueChange={setPriority}
-          options={priorities}
-        />
+        <Popover>
+          <PopoverTrigger>
+            <Button variant="outline">
+              <ListFilter className="w-4 h-4" />
+              Filters
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="p-0">
+            <Filters
+              category={category}
+              setCategory={setCategory}
+              status={status}
+              setStatus={setStatus}
+              priority={priority}
+              setPriority={setPriority}
+              clearFilters={clearFilters}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {filteredTasks.length ? (
@@ -89,7 +92,11 @@ const TaskList = () => {
         </div>
       ) : (
         <div className="p-20 w-full flex justify-center">
-          {taskStore.loading ? "Loading tasks..." : " Nothing found"}
+          {taskStore.loading ? (
+            <LoaderCircle className="w-8 h-8 animate-spin" />
+          ) : (
+            " Nothing found"
+          )}
         </div>
       )}
     </div>
