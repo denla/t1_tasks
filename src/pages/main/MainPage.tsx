@@ -47,9 +47,7 @@ const MainPage = () => {
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Create a task</DialogTitle>
-            <DialogClose asChild>
-              <button aria-label="Close">✕</button>
-            </DialogClose>
+            <DialogClose asChild></DialogClose>
           </DialogHeader>
           <TaskForm onSave={closeModal} />
         </DialogContent>
