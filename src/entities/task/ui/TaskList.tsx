@@ -25,12 +25,7 @@ import { filterStore } from "../model/filterStore";
 import { observer } from "mobx-react-lite";
 import { useLocation } from "react-router-dom";
 
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/shared/ui/shadcn/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/shadcn/tabs";
 
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -62,46 +57,15 @@ const TaskList = () => {
             .includes(filterStore.search.toLowerCase())))
   );
 
-  // const filteredTasks = taskStore.tasks.filter((el) => {
-  //   const matchesCategory =
-  //     filterStore.categories.length === 0 ||
-  //     filterStore.categories.includes(el.category);
-
-  //   const matchesStatus =
-  //     filterStore.statuses.length === 0 ||
-  //     filterStore.statuses.includes(el.status);
-
-  //   const matchesPriority =
-  //     filterStore.priorities.length === 0 ||
-  //     filterStore.priorities.includes(el.priority);
-
-  //   const matchesSearch =
-  //     el.title.toLowerCase().includes(filterStore.search.toLowerCase()) ||
-  //     (el.description &&
-  //       el.description
-  //         .toLowerCase()
-  //         .includes(filterStore.search.toLowerCase()));
-
-  //   return matchesCategory && matchesStatus && matchesPriority && matchesSearch;
-  // });
-
   return (
     <div>
       <div className="flex flex-row gap-4 mb-4">
-        {/* <Input
-          type="text"
-          placeholder="Search tasks"
-          className="w-full"
-          value={filterStore.search}
-          onChange={(e) => filterStore.setSearch(e.target.value)}
-        /> */}
-
         <div className="relative w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             type="text"
             placeholder="Search tasks"
-            className="pl-10" // ← добавляем отступ слева под иконку
+            className="pl-10"
             value={filterStore.search}
             onChange={(e) => filterStore.setSearch(e.target.value)}
           />

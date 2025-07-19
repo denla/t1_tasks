@@ -1,9 +1,7 @@
-// import { Card, CardContent, CardTitle } from "@/shared/ui/shadcn/card";
 import { Badge } from "@/shared/ui/shadcn/badge";
 import { Button } from "@/shared/ui/shadcn/button";
 import { Link } from "react-router-dom";
 import type { Task } from "@/entities/task/model/taskStore";
-import { taskStore } from "@/entities/task/model/taskStore";
 
 import { CircleCheck, Loader } from "lucide-react";
 import { ArrowDown, ArrowRight, ArrowUp, Ellipsis } from "lucide-react";
