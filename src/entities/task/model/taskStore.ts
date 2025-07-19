@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { supabase } from "@/entities/task/model/supabaseClients";
+import axios from "axios";
 
 export type Task = {
   id: string;
@@ -20,50 +20,30 @@ class TaskStore {
   }
 
   async loadTasks() {
-    this.loading = true;
-    try {
-      const { data } = await supabase.from("tasks").select("*");
-      this.tasks = data ?? [];
-      this.loading = false;
-      console.log("supabase data", data);
-    } catch (error) {
-      console.log("supabase error");
-      console.log(error);
-      this.loading = false;
-    }
+    axios.get("http://localhost:3000/tasks").then((res) => {
+      this.tasks = res.data;
+      console.log(res.data);
+    });
   }
 
   async addTask(task: Omit<Task, "id">) {
-    try {
-      const { data } = await supabase.from("tasks").insert([task]).select();
-      console.log("supabase data", data);
-    } catch (error) {
-      console.log("supabase error");
-      console.log(error);
-    }
-    this.loadTasks();
-  }
-
-  async updateTask(updated: Task) {
-    const { data, error } = await supabase
-      .from("tasks")
-      .update({
-        title: updated.title,
-        description: updated.description,
-        category: updated.category,
-        status: updated.status,
-        priority: updated.priority,
-      })
-      .eq("id", updated.id)
-      .select();
-    console.log("supabase data", data);
-    console.log("supabase error", error);
-    this.loadTasks();
+    axios.post("http://localhost:3000/tasks", task).then((res) => {
+      this.tasks.push(res.data);
+    });
   }
 
   async removeTask(id: string) {
-    const { error } = await supabase.from("tasks").delete().eq("id", id);
-    console.log("supabase error", error);
+    axios.delete(`http://localhost:3000/tasks/${id}`).then((res) => {
+      this.tasks = this.tasks.filter((task) => task.id !== id);
+    });
+  }
+
+  async updateTask(updated: Task) {
+    axios
+      .patch(`http://localhost:3000/tasks/${updated.id}`, updated)
+      .then((res) => {
+        console.log(res.data);
+      });
     this.loadTasks();
   }
 
