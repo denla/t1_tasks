@@ -9,7 +9,7 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
-app.get("/tasks", async (req: Request, res: Response) => {
+app.get("/tasks", async (res: Response) => {
   const { data } = await supabase.from("tasks").select("*");
   res.send(data);
 });

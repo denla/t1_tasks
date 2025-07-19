@@ -33,7 +33,7 @@ class TaskStore {
   }
 
   async removeTask(id: string) {
-    axios.delete(`http://localhost:3000/tasks/${id}`).then((res) => {
+    axios.delete(`http://localhost:3000/tasks/${id}`).then(() => {
       this.tasks = this.tasks.filter((task) => task.id !== id);
     });
   }
