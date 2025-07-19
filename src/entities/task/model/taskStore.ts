@@ -20,30 +20,28 @@ class TaskStore {
   }
 
   async loadTasks() {
-    axios.get("http://localhost:3000/tasks").then((res) => {
+    axios.get("/api/tasks").then((res) => {
       this.tasks = res.data;
       console.log(res.data);
     });
   }
 
   async addTask(task: Omit<Task, "id">) {
-    axios.post("http://localhost:3000/tasks", task).then((res) => {
+    axios.post("/api/tasks", task).then((res) => {
       this.tasks.push(res.data);
     });
   }
 
   async removeTask(id: string) {
-    axios.delete(`http://localhost:3000/tasks/${id}`).then(() => {
+    axios.delete(`/api/tasks/${id}`).then(() => {
       this.tasks = this.tasks.filter((task) => task.id !== id);
     });
   }
 
   async updateTask(updated: Task) {
-    axios
-      .patch(`http://localhost:3000/tasks/${updated.id}`, updated)
-      .then((res) => {
-        console.log(res.data);
-      });
+    axios.patch(`/api/tasks/${updated.id}`, updated).then((res) => {
+      console.log(res.data);
+    });
     this.loadTasks();
   }
 
