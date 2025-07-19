@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { taskStore } from "../model/taskStore";
 import TaskItem from "./TaskItem";
+import TaskItemRow from "./TaskItemRow";
 
 import { Input } from "@/shared/ui/shadcn/input";
 import { Button } from "@/shared/ui/shadcn/button";
@@ -11,46 +12,101 @@ import {
   PopoverTrigger,
 } from "@/shared/ui/shadcn/popover";
 
-import { ListFilter, LoaderCircle } from "lucide-react";
+import {
+  ListFilter,
+  LoaderCircle,
+  LayoutGrid,
+  List,
+  Search,
+} from "lucide-react";
 import Filters from "./Filters";
+import { filterStore } from "../model/filterStore";
+
+import { observer } from "mobx-react-lite";
+import { useLocation } from "react-router-dom";
+
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/ui/shadcn/tabs";
+
+import { motion, AnimatePresence } from "framer-motion";
 
 const TaskList = () => {
-  const [category, setCategory] = useState<string>("All");
-  const [status, setStatus] = useState<string>("All");
-  const [priority, setPriority] = useState<string>("All");
-
-  const [search, setSearch] = useState<string>("");
+  const [toggleView, setToggleView] = useState("grid");
 
   useEffect(() => {
     taskStore.loadTasks();
-  }, [category, status, priority]);
+  }, []);
 
-  const clearFilters = () => {
-    setCategory("All");
-    setStatus("All");
-    setPriority("All");
-  };
+  const category = new URLSearchParams(useLocation().search).get("category");
+
+  useEffect(() => {
+    filterStore.setCategory(category ?? "All");
+    console.log("category", filterStore.category);
+  }, [category]);
 
   const filteredTasks = taskStore.tasks.filter(
     (el) =>
-      (category === "All" || el.category === category) &&
-      (status === "All" || el.currentStatus === status) &&
-      (priority === "All" || el.priority === priority) &&
-      (el.title.toLowerCase().includes(search.toLowerCase()) ||
+      (filterStore.category === "All" ||
+        el.category === filterStore.category) &&
+      (filterStore.status === "All" ||
+        el.currentStatus === filterStore.status) &&
+      (filterStore.priority === "All" ||
+        el.priority === filterStore.priority) &&
+      (el.title.toLowerCase().includes(filterStore.search.toLowerCase()) ||
         (el.description &&
-          el.description.toLowerCase().includes(search.toLowerCase())))
+          el.description
+            .toLowerCase()
+            .includes(filterStore.search.toLowerCase())))
   );
+
+  // const filteredTasks = taskStore.tasks.filter((el) => {
+  //   const matchesCategory =
+  //     filterStore.categories.length === 0 ||
+  //     filterStore.categories.includes(el.category);
+
+  //   const matchesStatus =
+  //     filterStore.statuses.length === 0 ||
+  //     filterStore.statuses.includes(el.currentStatus);
+
+  //   const matchesPriority =
+  //     filterStore.priorities.length === 0 ||
+  //     filterStore.priorities.includes(el.priority);
+
+  //   const matchesSearch =
+  //     el.title.toLowerCase().includes(filterStore.search.toLowerCase()) ||
+  //     (el.description &&
+  //       el.description
+  //         .toLowerCase()
+  //         .includes(filterStore.search.toLowerCase()));
+
+  //   return matchesCategory && matchesStatus && matchesPriority && matchesSearch;
+  // });
 
   return (
     <div>
       <div className="flex flex-row gap-4 mb-4">
-        <Input
+        {/* <Input
           type="text"
           placeholder="Search tasks"
           className="w-full"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+          value={filterStore.search}
+          onChange={(e) => filterStore.setSearch(e.target.value)}
+        /> */}
+
+        <div className="relative w-full">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Input
+            type="text"
+            placeholder="Search tasks"
+            className="pl-10" // ← добавляем отступ слева под иконку
+            value={filterStore.search}
+            onChange={(e) => filterStore.setSearch(e.target.value)}
+          />
+        </div>
         <Popover>
           <PopoverTrigger>
             <Button variant="outline">
@@ -59,43 +115,62 @@ const TaskList = () => {
             </Button>
           </PopoverTrigger>
           <PopoverContent className="p-0">
-            <Filters
-              category={category}
-              setCategory={setCategory}
-              status={status}
-              setStatus={setStatus}
-              priority={priority}
-              setPriority={setPriority}
-              clearFilters={clearFilters}
-            />
+            <Filters />
           </PopoverContent>
         </Popover>
+
+        <Tabs value={toggleView} onValueChange={setToggleView}>
+          <TabsList>
+            <TabsTrigger value="grid">
+              <LayoutGrid />
+            </TabsTrigger>
+            <TabsTrigger value="list">
+              <List />
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
 
-      {filteredTasks.length ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4">
-          {taskStore.tasks
-            .filter(
-              (el) =>
-                (category === "All" || el.category === category) &&
-                (status === "All" || el.currentStatus === status) &&
-                (priority === "All" || el.priority === priority) &&
-                (el.title.toLowerCase().includes(search.toLowerCase()) ||
-                  (el.description &&
-                    el.description
-                      .toLowerCase()
-                      .includes(search.toLowerCase())))
-            )
-            .map((task) => (
-              <TaskItem key={task.id} task={task} />
-            ))}
+      {filteredTasks.length > 0 ? (
+        <div
+          className={
+            toggleView === "list"
+              ? "flex flex-col gap-0 border rounded-xl overflow-hidden"
+              : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+          }
+        >
+          <AnimatePresence mode="popLayout">
+            {filteredTasks.map((task) =>
+              toggleView === "list" ? (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <TaskItemRow key={task.id} task={task} />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 30 }}
+                  transition={{ duration: 0.1 }}
+                >
+                  <TaskItem key={task.id} task={task} />
+                </motion.div>
+              )
+            )}
+          </AnimatePresence>
         </div>
       ) : (
         <div className="p-20 w-full flex justify-center">
           {taskStore.loading ? (
             <LoaderCircle className="w-8 h-8 animate-spin" />
           ) : (
-            " Nothing found"
+            "Nothing found"
           )}
         </div>
       )}
@@ -103,4 +178,4 @@ const TaskList = () => {
   );
 };
 
-export default TaskList;
+export default observer(TaskList);

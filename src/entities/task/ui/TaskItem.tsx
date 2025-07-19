@@ -26,7 +26,7 @@ const priorityIcons = {
 
 export default function TaskItem({ task }: TaskItemProps) {
   return (
-    <Card className="w-full">
+    <Card className="w-full shadow-none">
       <CardContent className="space-y-4">
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline">{task.category}</Badge>
