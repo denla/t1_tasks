@@ -4,7 +4,7 @@ import cors from "cors";
 import { supabase } from "./supabaseClients";
 
 const app = express();
-const port = 3000;
+// const port = 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -64,6 +64,8 @@ app.delete("/tasks/:id", async (req: Request, res: Response) => {
   res.send(error);
 });
 
-app.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server running on http://localhost:${port}`);
+// });
+
+export default app;
