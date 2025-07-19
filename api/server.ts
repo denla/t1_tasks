@@ -9,12 +9,12 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/tasks", async (res: Response) => {
+app.get("/api/tasks", async (res: Response) => {
   const { data } = await supabase.from("tasks").select("*");
   res.send(data);
 });
 
-app.get("/tasks/:id", async (req: Request, res: Response) => {
+app.get("/api/tasks/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   const { data } = await supabase
     .from("tasks")
@@ -24,13 +24,13 @@ app.get("/tasks/:id", async (req: Request, res: Response) => {
   res.send(data);
 });
 
-app.post("/tasks", async (req: Request, res: Response) => {
+app.post("/api/tasks", async (req: Request, res: Response) => {
   const task = req.body;
   const { data } = await supabase.from("tasks").insert([task]).select();
   res.send(data?.[0]);
 });
 
-app.patch("/tasks/:id", async (req: Request, res: Response) => {
+app.patch("/api/tasks/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   const updated = req.body;
 
@@ -58,7 +58,7 @@ app.patch("/tasks/:id", async (req: Request, res: Response) => {
   res.send(data);
 });
 
-app.delete("/tasks/:id", async (req: Request, res: Response) => {
+app.delete("/api/tasks/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
   const { error } = await supabase.from("tasks").delete().eq("id", id);
   res.send(error);
