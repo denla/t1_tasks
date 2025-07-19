@@ -1,70 +1,14 @@
-import { makeAutoObservable, runInAction } from "mobx";
-import client from "@/shared/api/apolloClient";
-import { gql } from "@apollo/client";
+import { makeAutoObservable } from "mobx";
+import { supabase } from "@/entities/task/model/supabaseClients";
 
 export type Task = {
   id: string;
   title: string;
   description?: string;
   category: "Bug" | "Feature" | "Documentation" | "Refactor" | "Test";
-  currentStatus: "To Do" | "In Progress" | "Done";
+  status: "To Do" | "In Progress" | "Done";
   priority: "Low" | "Medium" | "High";
 };
-
-const GET_TASKS = gql`
-  query GetTasks {
-    tasks {
-      id
-      title
-      description
-      category
-      currentStatus
-      priority
-    }
-  }
-`;
-
-const ADD_TASK = gql`
-  mutation AddTask($input: TaskCreateInput!) {
-    createTask(data: $input) {
-      id
-      title
-      description
-      category
-      currentStatus
-      priority
-    }
-  }
-`;
-
-const UPDATE_TASK = gql`
-  mutation UpdateTask($id: ID!, $input: TaskUpdateInput!) {
-    updateTask(where: { id: $id }, data: $input) {
-      id
-      title
-      description
-      category
-      currentStatus
-      priority
-    }
-  }
-`;
-
-const PUBLISH_TASK = gql`
-  mutation PublishTask($id: ID!) {
-    publishTask(where: { id: $id }) {
-      id
-    }
-  }
-`;
-
-const DELETE_TASK = gql`
-  mutation DeleteTask($id: ID!) {
-    deleteTask(where: { id: $id }) {
-      id
-    }
-  }
-`;
 
 class TaskStore {
   tasks: Task[] = [];
@@ -78,94 +22,53 @@ class TaskStore {
   async loadTasks() {
     this.loading = true;
     try {
-      const { data } = await client.query({
-        query: GET_TASKS,
-        fetchPolicy: "network-only",
-      });
-      runInAction(() => {
-        this.tasks = data.tasks;
-        this.loading = false;
-      });
-    } catch (e) {
-      runInAction(() => {
-        this.loading = false;
-      });
-      console.error("Failed to load tasks", e);
+      const { data } = await supabase.from("tasks").select("*");
+      this.tasks = data ?? [];
+      this.loading = false;
+      console.log("supabase data", data);
+    } catch (error) {
+      console.log("supabase error");
+      console.log(error);
+      this.loading = false;
     }
   }
 
   async addTask(task: Omit<Task, "id">) {
     try {
-      const { data } = await client.mutate({
-        mutation: ADD_TASK,
-        variables: { input: task },
-      });
-      const createdTask = data.createTask;
-
-      await client.mutate({
-        mutation: PUBLISH_TASK,
-        variables: { id: createdTask.id },
-      });
-
-      runInAction(() => {
-        this.tasks.push(data.createTask);
-      });
-    } catch (e) {
-      console.error("Failed to add task", e);
+      const { data } = await supabase.from("tasks").insert([task]).select();
+      console.log("supabase data", data);
+    } catch (error) {
+      console.log("supabase error");
+      console.log(error);
     }
+    this.loadTasks();
   }
 
   async updateTask(updated: Task) {
-    try {
-      const { data } = await client.mutate({
-        mutation: UPDATE_TASK,
-        variables: {
-          id: updated.id,
-          input: {
-            title: updated.title,
-            description: updated.description,
-            category: updated.category,
-            currentStatus: updated.currentStatus,
-            priority: updated.priority,
-          },
-        },
-      });
-
-      const updatedTask = data.updateTask;
-
-      await client.mutate({
-        mutation: PUBLISH_TASK,
-        variables: { id: updatedTask.id },
-      });
-
-      runInAction(() => {
-        this.tasks = this.tasks.map((t) =>
-          t.id === updatedTask.id ? updatedTask : t
-        );
-      });
-    } catch (e) {
-      console.error("Failed to update task", e);
-    }
+    const { data, error } = await supabase
+      .from("tasks")
+      .update({
+        title: updated.title,
+        description: updated.description,
+        category: updated.category,
+        status: updated.status,
+        priority: updated.priority,
+      })
+      .eq("id", updated.id)
+      .select();
+    console.log("supabase data", data);
+    console.log("supabase error", error);
+    this.loadTasks();
   }
 
   async removeTask(id: string) {
-    try {
-      await client.mutate({
-        mutation: DELETE_TASK,
-        variables: { id },
-      });
-      runInAction(() => {
-        this.tasks = this.tasks.filter((t) => t.id !== id);
-      });
-    } catch (e) {
-      console.error("Failed to delete task", e);
-    }
+    const { error } = await supabase.from("tasks").delete().eq("id", id);
+    console.log("supabase error", error);
+    this.loadTasks();
   }
 
   async removeTasks() {
-    for (const task of this.tasks) {
-      await this.removeTask(task.id);
-    }
+    console.log("remove tasks action called");
   }
 }
 

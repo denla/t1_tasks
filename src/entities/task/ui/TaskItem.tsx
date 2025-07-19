@@ -31,8 +31,8 @@ export default function TaskItem({ task }: TaskItemProps) {
         <div className="flex flex-wrap gap-2">
           <Badge variant="outline">{task.category}</Badge>
           <Badge variant="outline">
-            {statusIcons[task.currentStatus]}
-            {task.currentStatus}
+            {statusIcons[task.status]}
+            {task.status}
           </Badge>
           <Badge variant="outline">
             {priorityIcons[task.priority]}

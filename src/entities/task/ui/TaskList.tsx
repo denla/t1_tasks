@@ -52,8 +52,7 @@ const TaskList = () => {
     (el) =>
       (filterStore.category === "All" ||
         el.category === filterStore.category) &&
-      (filterStore.status === "All" ||
-        el.currentStatus === filterStore.status) &&
+      (filterStore.status === "All" || el.status === filterStore.status) &&
       (filterStore.priority === "All" ||
         el.priority === filterStore.priority) &&
       (el.title.toLowerCase().includes(filterStore.search.toLowerCase()) ||
@@ -70,7 +69,7 @@ const TaskList = () => {
 
   //   const matchesStatus =
   //     filterStore.statuses.length === 0 ||
-  //     filterStore.statuses.includes(el.currentStatus);
+  //     filterStore.statuses.includes(el.status);
 
   //   const matchesPriority =
   //     filterStore.priorities.length === 0 ||

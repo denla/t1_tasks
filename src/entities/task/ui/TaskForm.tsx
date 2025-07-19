@@ -30,12 +30,18 @@ const TaskForm = ({ onSave }: TaskFormProps) => {
 
   useEffect(() => {
     if (id && taskStore.tasks.length > 0) {
-      const task = taskStore.tasks.find((task) => task.id === id);
+      const task = taskStore.tasks.find(
+        (task) => Number(task.id) === Number(id)
+      );
+      console.log(
+        "tasks",
+        taskStore.tasks.find((task) => Number(task.id) === Number(id))
+      );
       if (task) {
         setTitle(task.title);
         setDescription(task.description || "");
         setCategory(task.category);
-        setStatus(task.currentStatus);
+        setStatus(task.status);
         setPriority(task.priority);
       }
     }
@@ -56,7 +62,7 @@ const TaskForm = ({ onSave }: TaskFormProps) => {
       title,
       description,
       category: category as Task["category"],
-      currentStatus: status as Task["currentStatus"],
+      status: status as Task["status"],
       priority: priority as Task["priority"],
     };
 
