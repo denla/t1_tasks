@@ -9,9 +9,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/tasks", async (res: Response) => {
-  const { data } = await supabase.from("tasks").select("*");
-  res.send(data);
+app.get("/api/tasks", async (_req: Request, res: Response) => {
+  const { data, error } = await supabase.from("tasks").select("*");
+  if (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Ошибка при получении задач", error });
+  }
+  res.json(data);
 });
 
 app.get("/api/tasks/:id", async (req: Request, res: Response) => {
