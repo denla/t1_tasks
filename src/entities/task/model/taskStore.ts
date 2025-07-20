@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import axios from "axios";
-const url = import.meta.env.VITE_API_URL || "";
+const url = "";
 
 export type Task = {
   id: string;
@@ -9,11 +9,12 @@ export type Task = {
   category: "Bug" | "Feature" | "Documentation" | "Refactor" | "Test";
   status: "To Do" | "In Progress" | "Done";
   priority: "Low" | "Medium" | "High";
+  created_at?: string;
 };
 
 class TaskStore {
   tasks: Task[] = [];
-  loading = false;
+  loading = true;
 
   constructor() {
     makeAutoObservable(this);
@@ -21,10 +22,14 @@ class TaskStore {
   }
 
   async loadTasks() {
-    axios.get(`${url}/api/tasks`).then((res) => {
-      this.tasks = res.data;
-      console.log(res.data);
-    });
+    this.loading = true;
+    axios
+      .get(`${url}/api/tasks`)
+      .then((res) => {
+        this.tasks = res.data;
+        console.log(res.data);
+      })
+      .then(() => (this.loading = false));
   }
 
   async addTask(task: Omit<Task, "id">) {

@@ -6,7 +6,9 @@ import type { Task } from "@/entities/task/model/taskStore";
 import { taskStore } from "@/entities/task/model/taskStore";
 
 import { CircleCheck, Loader } from "lucide-react";
-import { ArrowDown, ArrowRight, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUp, Trash2, Edit } from "lucide-react";
+import { formatTaskDate } from "@/shared/ui/lib/formatTime";
+import { Separator } from "@/shared/ui/shadcn/separator";
 
 type TaskItemProps = {
   task: Task;
@@ -45,19 +47,25 @@ export default function TaskItem({ task }: TaskItemProps) {
         ) : (
           <p className="text-sm text-muted-foreground ">No description</p>
         )}
-        <div className="flex flex-wrap gap-2">
-          <Link to={`/task/${task.id}`}>
-            <Button variant="outline" size="sm">
-              Edit task
+        <Separator />
+        <div className="flex flex-wrap gap-2 items-center justify-between">
+          <p className="text-sm text-muted-foreground ">
+            {formatTaskDate(task.created_at)}
+          </p>
+          <div className="flex gap-2">
+            <Link to={`/task/${task.id}`}>
+              <Button variant="outline" size="sm">
+                <Edit /> Edit task
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => taskStore.removeTask(task.id)}
+            >
+              <Trash2 />
             </Button>
-          </Link>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => taskStore.removeTask(task.id)}
-          >
-            Remove task
-          </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

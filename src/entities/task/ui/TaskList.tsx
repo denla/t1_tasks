@@ -43,19 +43,25 @@ const TaskList = () => {
     console.log("category", filterStore.category);
   }, [category]);
 
-  const filteredTasks = taskStore.tasks.filter(
-    (el) =>
-      (filterStore.category === "All" ||
-        el.category === filterStore.category) &&
-      (filterStore.status === "All" || el.status === filterStore.status) &&
-      (filterStore.priority === "All" ||
-        el.priority === filterStore.priority) &&
-      (el.title.toLowerCase().includes(filterStore.search.toLowerCase()) ||
-        (el.description &&
-          el.description
-            .toLowerCase()
-            .includes(filterStore.search.toLowerCase())))
-  );
+  const filteredTasks = taskStore.tasks
+    .filter(
+      (el) =>
+        (filterStore.category === "All" ||
+          el.category === filterStore.category) &&
+        (filterStore.status === "All" || el.status === filterStore.status) &&
+        (filterStore.priority === "All" ||
+          el.priority === filterStore.priority) &&
+        (el.title.toLowerCase().includes(filterStore.search.toLowerCase()) ||
+          (el.description &&
+            el.description
+              .toLowerCase()
+              .includes(filterStore.search.toLowerCase())))
+    )
+    .sort((a, b) => {
+      const aDate = new Date(a.created_at || "");
+      const bDate = new Date(b.created_at || "");
+      return bDate.getTime() - aDate.getTime();
+    });
 
   return (
     <div>
@@ -98,7 +104,7 @@ const TaskList = () => {
         <div
           className={
             toggleView === "list"
-              ? "flex flex-col gap-0 border rounded-xl overflow-hidden"
+              ? "flex flex-col gap-0 border rounded-xl overflow-x-auto"
               : "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
           }
         >

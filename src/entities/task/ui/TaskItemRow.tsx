@@ -24,42 +24,33 @@ const priorityIcons = {
 
 export default function TaskItem({ task }: TaskItemProps) {
   return (
-    <div className="flex items-center justify-between gap-4 p-2 border-b bg-background hover:bg-muted transition">
+    <div className="flex items-center w-full justify-between gap-4 p-2 border-b bg-background hover:bg-muted transition">
       <div className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="flex gap-2 shrink-0 w-60">
-          <Badge variant="outline">{task.category}</Badge>
-          <Badge variant="outline" className="flex items-center gap-1">
-            {statusIcons[task.status]}
-            {task.status}
-          </Badge>
-          <Badge variant="outline" className="flex items-center gap-1">
-            {priorityIcons[task.priority]}
-            {task.priority}
-          </Badge>
-        </div>
-
-        <div className="flex min-w-0 flex-row gap-4 align-center">
-          <p className="font-medium truncate w-60">{task.title}</p>
+        <div className="flex flex-col gap-1 w-full truncate p-1">
+          <p className="font-medium truncate">{task.title}</p>
           <p className="text-sm text-muted-foreground truncate">
             {task.description || "No description"}
           </p>
         </div>
-      </div>
 
-      <div className="flex gap-2 shrink-0">
+        <div className="flex gap-2 shrink-0 flex-wrap">
+          <Badge variant="outline">{task.category}</Badge>
+          <Badge variant="outline">
+            {statusIcons[task.status]}
+            {task.status}
+          </Badge>
+          <Badge variant="outline">
+            {priorityIcons[task.priority]}
+            {task.priority}
+          </Badge>
+        </div>
+      </div>
+      <div className="flex gap-2 w-[50px] shrink-0 justify-end">
         <Link to={`/task/${task.id}`}>
           <Button variant="ghost" size="sm">
             <Ellipsis />
-            {/* Edit */}
           </Button>
         </Link>
-        {/* <Button
-          variant="outline"
-          size="sm"
-          onClick={() => taskStore.removeTask(task.id)}
-        >
-          Remove
-        </Button> */}
       </div>
     </div>
   );
