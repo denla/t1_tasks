@@ -2,31 +2,42 @@ import express from "express";
 import type { Request, Response } from "express";
 import cors from "cors";
 import { supabase } from "./supabaseClients";
+import dotenv from "dotenv";
+dotenv.config({ path: "../.env" });
 
 const app = express();
-// const port = 3000;
+const port = 3000;
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/api/tasks", async (_req: Request, res: Response) => {
-  const { data, error } = await supabase.from("tasks").select("*");
+app.get("/api/tasks", async (req: Request, res: Response) => {
+  const { title } = req.query;
+  let query = supabase.from("tasks").select("*");
+  if (title) {
+    query = query.ilike("title", `%${title}%`);
+  }
+  const { data, error } = await query;
   if (error) {
     console.error(error);
-    return res
-      .status(500)
-      .json({ message: "Ошибка при получении задач", error });
+    return res.status(500).json({ message: "Error", error });
   }
   res.json(data);
 });
 
 app.get("/api/tasks/:id", async (req: Request, res: Response) => {
   const { id } = req.params;
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("tasks")
     .select("*")
     .eq("id", id)
     .single();
+
+  if (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error", error });
+  }
+
   res.send(data);
 });
 
@@ -52,15 +63,6 @@ app.patch("/api/tasks/:id", async (req: Request, res: Response) => {
     .eq("id", id)
     .select();
 
-  //   if (error) {
-  //     return res.status(500).json({ message: "Ошибка при обновлении", error });
-  //   }
-
-  //   if (!data || data.length === 0) {
-  //     return res.status(404).json({ message: "Задача не найдена" });
-  //   }
-
-  //   res.json(data[0]);
   res.send(data);
 });
 
@@ -70,8 +72,10 @@ app.delete("/api/tasks/:id", async (req: Request, res: Response) => {
   res.send(error);
 });
 
-// app.listen(port, () => {
-//   console.log(`Server running on http://localhost:${port}`);
-// });
+if (process.env.VITE_API_URL) {
+  app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+  });
+}
 
 export default app;
